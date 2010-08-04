@@ -99,9 +99,6 @@ AC_ARG_VAR(RRDGRAPH_YLEGEND_ANGLE,
 AC_DEFINE_UNQUOTED(RRDGRAPH_YLEGEND_ANGLE,${RRDGRAPH_YLEGEND_ANGLE:-90.0},
  [Vertical label angle: -90.0 (default) or 90.0])
 
-AC_ARG_ENABLE(rrdcgi,AS_HELP_STRING([--disable-rrdcgi],[disable building of rrdcgi]),
-[],[enable_rrdcgi=yes])
-
 dnl Check if we run on a system that has fonts
 AC_ARG_WITH(rrd-default-font,
 [  --with-rrd-default-font=[OPTIONS]  set the full path to your default font.],
@@ -273,9 +270,6 @@ AC_CHECK_DECLS(posix_fadvise, [], [], [#define _XOPEN_SOURCE 600
 AC_CHECK_FUNCS(posix_fadvise)
 
 CONFIGURE_PART(Libintl Processing)
-
-AM_GNU_GETTEXT_VERSION(0.18)
-AM_GNU_GETTEXT(external)
 
 CONFIGURE_PART(IEEE Math Checks)
  
@@ -496,41 +490,7 @@ AC_LANG_POP(C)
 
 CONFIGURE_PART(Find 3rd-Party Libraries)
 
-AC_ARG_ENABLE(libdbi,AS_HELP_STRING([--disable-libdbi],[do not build in support for libdbi]),[have_libdbi=no],[
-  XXX=$LIBS
-  LIBS="$LIBS -ldbi -ldl"
-  AC_MSG_CHECKING(for libdbi)
-  AC_LINK_IFELSE(
-    [AC_LANG_PROGRAM([[#include <dbi/dbi.h>]], 
-                     [[dbi_initialize(NULL)]]
-                    )
-    ],[AC_DEFINE(HAVE_LIBDBI,[1],[have got libdbi installed])
-       AC_MSG_RESULT([yes])
-       have_libdbi=yes
-    ],[LIBS=$XXX
-       AC_MSG_RESULT([no])
-       have_libdbi=no
-    ]
-  )
-])
-AM_CONDITIONAL(BUILD_LIBDBI,[test $have_libdbi != no])
-
-AM_CONDITIONAL(BUILD_RRDCGI,[test $enable_rrdcgi != no])
-
-
 CORE_LIBS="$LIBS"
-
-dnl EX_CHECK_ALL(z,          zlibVersion,               zlib.h,                 zlib,        1.2.3,  http://www.gzip.org/zlib/, "")
-dnl EX_CHECK_ALL(png,        png_access_version_number, png.h,                  libpng,      1.2.10,  http://prdownloads.sourceforge.net/libpng/, "")
-dnl EX_CHECK_ALL(freetype,   FT_Init_FreeType,          ft2build.h,		freetype2,   2.1.10,  http://prdownloads.sourceforge.net/freetype/, /usr/include/freetype2)
-dnl EX_CHECK_ALL(fontconfig, FcInit,                    fontconfig.h,		fontconfig,  2.3.1,  http://fontconfig.org/release/, /usr/include)
-EX_CHECK_ALL(cairo,      cairo_font_options_create,     cairo.h,                cairo-png,   1.4.6,  http://cairographics.org/releases/, "")
-EX_CHECK_ALL(cairo,      cairo_svg_surface_create,      cairo-svg.h,            cairo-svg,   1.4.6,  http://cairographics.org/releases/, "")
-EX_CHECK_ALL(cairo,      cairo_pdf_surface_create,      cairo-pdf.h,            cairo-pdf,   1.4.6,  http://cairographics.org/releases/, "")
-EX_CHECK_ALL(cairo,      cairo_ps_surface_create,       cairo-ps.h,             cairo-ps,    1.4.6,  http://cairographics.org/releases/, "")
-EX_CHECK_ALL(glib-2.0,   glib_check_version,            glib.h,                 glib-2.0,    2.12.12, ftp://ftp.gtk.org/pub/glib/2.12/, "")
-EX_CHECK_ALL(pangocairo-1.0,  pango_cairo_context_set_font_options,  pango/pango.h,  pangocairo,  1.17,    http://ftp.gnome.org/pub/GNOME/sources/pango/1.17, "")
-EX_CHECK_ALL(xml2,       xmlParseFile,                  libxml/parser.h,        libxml-2.0,        2.6.31,  http://xmlsoft.org/downloads.html, /usr/include/libxml2)
 
 if test "$EX_CHECK_ALL_ERR" = "YES"; then
   AC_MSG_ERROR([Please fix the library issues listed above and try again.])
@@ -891,27 +851,8 @@ if test -z "$RRDDOCDIR"; then
 
 CONFIGURE_PART(Apply Configuration Information)
  
-AC_CONFIG_FILES([examples/shared-demo.pl])
-AC_CONFIG_FILES([examples/piped-demo.pl])
-AC_CONFIG_FILES([examples/stripes.pl])
-AC_CONFIG_FILES([examples/bigtops.pl])
-AC_CONFIG_FILES([examples/minmax.pl])
-AC_CONFIG_FILES([examples/4charts.pl])
-AC_CONFIG_FILES([examples/perftest.pl])
-AC_CONFIG_FILES([examples/Makefile])
-AC_CONFIG_FILES([examples/rrdcached/Makefile])
-AC_CONFIG_FILES([doc/Makefile])
-AC_CONFIG_FILES([po/Makefile.in]) 
 AC_CONFIG_FILES([src/Makefile])
-AC_CONFIG_FILES([src/librrd.sym.in])
-AC_CONFIG_FILES([src/librrd.pc])
-AC_CONFIG_FILES([bindings/Makefile])
-AC_CONFIG_FILES([bindings/tcl/Makefile])
-AC_CONFIG_FILES([bindings/tcl/ifOctets.tcl])
 AC_CONFIG_FILES([Makefile])          
-AC_CONFIG_FILES([bindings/lua/Makefile])
-
-AC_CONFIG_COMMANDS([default],[[ chmod +x examples/*.pl]],[[]])
 
 dnl intl requires our config to be called config.h. indulge it.
 AC_CONFIG_COMMANDS_POST([ test -f config.h || ln -s rrd_config.h config.h ])

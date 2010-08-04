@@ -5,7 +5,7 @@ RSYNC = rsync --rsh=ssh
 
 # build the following subdirectories
 
-SUBDIRS = po src examples doc bindings
+SUBDIRS = src
 
  # the following files are not mentioned in any other Makefile
 EXTRA_DIST = COPYRIGHT CHANGES WIN32-BUILD-TIPS.txt TODO CONTRIBUTORS THREADS \
@@ -29,18 +29,6 @@ ACLOCAL_M4= $(top_srcdir)/aclocal.m4
 #AUTOCONF = @AUTOCONF@ --localdir=$(top_srcdir)/config
 
 #	$(RSYNC) CHANGES archive/$(PACKAGE)-$(VERSION).tar.gz tobi@ipn.caida.org:/ipn/web/Tools/RRDtool/pub/
-
-site-perl-inst: site-perl-install
-
-site-perl-install: all bindings/perl-piped/Makefile bindings/perl-shared/Makefile
-	cd bindings/perl-piped && $(MAKE) install
-	cd bindings/perl-shared && $(MAKE) install
-
-site-tcl-install: all
-	cd bindings/tcl && $(MAKE) tcl-install
-
-site-python-install: all
-	cd bindings/python && $(PYTHON) setup.py install $(if $(DESTDIR),--root=$(DESTDIR))
 
 # find . -name "*.c" -or -name "*.h" | xargs perl -0777 -n -e 'while (s/typedef\s+(?:unsigned\s+|signed\s+|unival\s+)?\S+\s+\*?([^{}\s;(]+)//){print "-T$1\n"}'
 indent:
